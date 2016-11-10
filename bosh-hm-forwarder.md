@@ -1,6 +1,6 @@
 ## Cloud Foundry VM Health Metrics in the Firehose - Deploying the Bosh Health Metrics Forwarder
 
-In your cloud native journey using Pivotal Cloud Foundry (PCF), often, you are often trying to increase your maturity on monitoring the health of your Cloud Foundry platform. Likely, you are also using the the goodness of the firehose/nozzle architecture integrated with your monitoring tool to visualize and alert on various Cloud Foundry metrics, like the `rep.capacityRemaningMemory` metric. Have you noticed that the Cloud Foundry VM metrics, like CPU utilization for the Cloud Controller, are missing from the firehose? Not to worry as there is something called the Bosh Health Metrics Forwarder that solves this problem.
+In your cloud native journey using Cloud Foundry, you are often trying to increase your maturity on monitoring the health of your platform. Likely, you are also using the the goodness of the firehose/nozzle architecture integrated with your monitoring tool to visualize and alert on various Cloud Foundry metrics, like the `rep.capacityRemaningMemory` metric. Have you noticed that the Cloud Foundry VM metrics, like CPU utilization for the Cloud Controller, are missing from the firehose? Not to worry as there is something called the Bosh Health Metrics Forwarder that solves this problem.
 
 _Sidebar: Ever wonder what key metrics to monitor in Cloud Foundry? Check out [Rohit Kelapure's](https://www.blogger.com/profile/12988550581111360779) post on the [top 10 KPIs in Cloud Foundry](http://cloud.rohitkelapure.com/2016/06/top-10-kpis-cloud-foundry.html)._
 
@@ -18,39 +18,44 @@ Each bosh managed VM in a Cloud Foundry foundation has a bosh agent that collect
 
 ![How Bosh Forwarder works](./images/bosh-forwarder-how.png)
 
-The `boshhmforwarder` can be deployed as a separate bosh release. This release contains a single VM with an [OpenTSDB listener](http://opentsdb.net) and a `metron agent` job.  The `metron agent` is configured to send the bosh health metric events, received on the `OpenTSDB listener`, to the `doppler` VMs in your Cloud Foundry foundation.
+The `boshhmforwarder` can be deployed as a separate [bosh release](https://bosh.io/docs/release.html) using your foundation's existing [bosh director](https://bosh.io/docs/bosh-components.html#director). This bosh release contains a single VM with an [OpenTSDB listener](http://opentsdb.net) and a `metron agent` job.  The `metron agent` is configured to send the bosh health metric events, received on the `OpenTSDB listener`, to the `doppler` VMs in your Cloud Foundry foundation.
 
 ##### Deploying the Bosh Health Metrics Forwarder
 
 Going from zero to bosh health metrics in the firehose is just a few steps. These steps are:
 
-1. Build your manifest using the sample below:
+1. Build your manifest using the sample below (the lines with << >> are informational and should be removed):
 ```
 name: boshhmforwarder
 
-director_uuid: <<get using bosh status>>
+<<get using bosh status>>
+director_uuid: e4cbdf25-9131-4972-a92f-a5485071966f
 
 releases:
 - name: cf
-  version: <<get using bosh releases>>
+  <<get using bosh releases>>
+  version: 239.0.26
 - name: loggregator
   version: latest
 
 stemcells:
 - alias: trusty
   os: ubuntu-trusty
-  version: <<get from bosh deployments looking at the stemcells column of the cf release or use latest>>
+  version: latest
 
 instance_groups:
 - name: boshhmforwarder
   instances: 1
   stemcell: trusty
-  azs: <<get name where you want to deploy from your Ops Manager Director>>
+  <<get name where you want to deploy from your Ops Manager Director>>
+  azs: myaz
   vm_type: medium
   networks:
-  - name: <<get name where you want to deploy from your Ops Manager Director>>
+  <<get name where you want to deploy from your Ops Manager Director>>
+  - name: myNetwork
     static_ips:
-    - <<get from bosh cloud-config, from an ip not used>>
+    <<get from bosh cloud-config, from an ip not used>>
+    - 192.168.0.99
   jobs:
   - name: boshhmforwarder
     release: loggregator
@@ -69,7 +74,10 @@ instance_groups:
     loggregator:
       etcd:
         machines:
-        - <<get from bosh deployments <cf deployment>, all ip addreses if etcd jobs>>
+        <<get from bosh deployments <cf deployment>, all ip addreses if etcd jobs>>
+        - 192.168.0.57
+        - 192.168.0.58
+        - 192.168.0.59
 
 update:
   canaries: 1
