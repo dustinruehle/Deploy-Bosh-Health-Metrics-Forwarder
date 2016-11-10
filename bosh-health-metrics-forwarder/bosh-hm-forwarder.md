@@ -2,7 +2,7 @@
 
 In your cloud native journey using Cloud Foundry, you are often trying to increase your maturity on monitoring the health of your platform. Likely, you are also using the the goodness of the firehose/nozzle architecture integrated with your monitoring tool to visualize and alert on various Cloud Foundry metrics, like the `rep.capacityRemaningMemory` metric. Have you noticed that the Cloud Foundry VM metrics, like CPU utilization for the Cloud Controller, are missing from the firehose? Not to worry as there is something called the Bosh Health Metrics Forwarder that solves this problem.
 
-_Sidebar: Ever wonder what key metrics to monitor in Cloud Foundry? Check out [Rohit Kelapure's](https://www.blogger.com/profile/12988550581111360779) post on the [top 10 KPIs in Cloud Foundry](http://cloud.rohitkelapure.com/2016/06/top-10-kpis-cloud-foundry.html)._
+_Sidebar: Ever wonder what key metrics to monitor in Cloud Foundry? Check out [Rohit Kelapure's](https://twitter.com/RKela) post on the [top 10 KPIs in Cloud Foundry](http://cloud.rohitkelapure.com/2016/06/top-10-kpis-cloud-foundry.html)._
 
 ##### What is the Bosh Health Metrics Forwarder?
 
