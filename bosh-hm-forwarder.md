@@ -14,6 +14,10 @@ To better understand how the `boshhmforwarder` works, we should look at how the 
 
 Each bosh managed VM in a Cloud Foundry foundation has a bosh agent that collects the VM's health metrics and publishes to NATS. The [health monitor](http://bosh.io/docs/bosh-components.html#health-monitor) consumes the metrics from the NATS messages bus and uses it's [plugin architecture](http://bosh.io/docs/monitoring.html ) to send the metrics to an OpenTSDB endpoint on the JMX VM of the JMX Bridge tile. Now VM health metrics, like `system.healthy`, show up in the JMX tree.
 
+##### Choose your metrics receiving strategy
+
+You might be asking yourself: _If I have the JMX Bridge Tile, why would I need this `boshhmforwarder`?_ The short answer is you wouldn't need it necessarily. However, there are other factors to consider here. First, does your monitoring tool support pulling JMX metrics? If you are using [LogInsight](http://www.vmware.com/products/vrealize-log-insight.html), then your answer is likely no. Maybe your foundation is behind a software defined networking solution and you DNAT/SNAT your ingress and egress traffic. DNAT'ing JMX has it's own set of complications and complexities that you may want to avoid. At the end of the day, is your strategy based on pulling data (polling) or based on having data pushed to your monitoring tools (streaming)? My vote is through the firehose as that is the horizontally scalable way to get logging and metrics from the platform about platform components and applications.
+
 ##### How does the Bosh Health Metrics Forwarder work?
 
 ![How Bosh Forwarder works](./images/bosh-forwarder-how.png)
