@@ -101,6 +101,8 @@ update:
 
 In looking at the sample manifest, your are probably thinking "why is the `incoming_port=13321` for the `boshhmforwarder` property?" Great question. The answer lies in the fact that PCF's Ops Manager helps you manage an _opinionated_ representation of what you can do in the `bosh director manifest`. If you are using bosh to manage Cloud Foundry OSS, there are many more degrees of freedom to manage the foundation. With that [_"great power comes great responsibility"_](https://en.wikipedia.org/wiki/Uncle_Ben#.22With_great_power_comes_great_responsibility.22). In the OSS platform, you can directly set the port, along with the ip address, in the `jobs: > bosh > hm: > tsdb:` section of the bosh director manifest. In the Ops Manager's _opinion_, that port is `13321` and thus when you set the ip address per _step 4_ above, you are telling the `bosh health monitor` to send the health metric events to the `boshhmforwarder's OpenTSDB listener` on port `13321`.
 
+**Note:** If you are using the PCF JMX Bridge tile, once you complete _step 4_ above, the bosh health metrics will not show up in the JMX tree, but all other metrics will be in the tree as before
+
 ##### What do these metrics look like coming out of the firehose?
 
 Using the [cf nozzle-plugin](https://github.com/cloudfoundry/firehose-plugin), you can quickly see what the `boshhmforwarder` emits from the firehose. Below is a snapshot of metrics emitted for the `cloud controller`. These same metrics will show up for each VM.
