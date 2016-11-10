@@ -105,10 +105,10 @@ update:
 jobs:
 - name: bosh
   hm:
-  tsdb:
-    <<ip address of boshhmforwarder>>
-    address: 192.168.0.99
-    port: <<set your port>>
+    tsdb:
+      <<ip address of boshhmforwarder>>
+      address: 192.168.0.99
+      port: <<set your port>>
 
 ```
 
